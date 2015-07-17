@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
-
 import scrapy
 import urllib
 import logging
@@ -17,7 +16,7 @@ class CategorySpider(scrapy.Spider):
     super(CategorySpider, self).__init__()
     self.allowed_domains = ["i.meituan.com"]
     url_list = []
-    #url_list.append("http://i.meituan.com/guangzhou?cid=1&stid=_b1&cateType=poi&p=")
+    # 所有城市的拼音从A-Z
     for i in xrange(26):
       url_list.append("http://i.meituan.com/index/changecity/more/" + chr(i + ord('A')) + "?cevent=imt%2FselectCity%2Fmore")
     self.start_urls = tuple(url_list)
@@ -25,6 +24,7 @@ class CategorySpider(scrapy.Spider):
   def parse(self, response):
     city_list = response.selector.xpath('//ul[@class="table box nopadding"]/li/a/@data-citypinyin').extract()
     for city in city_list:
+      # 每个城市的美食url，抓取1000页
       url = "http://i.meituan.com/" + city + "?cid=1&stid=_b1&cateType=poi&p="
       for i in range(1, 1000):
         yield scrapy.http.Request(url=url + str(i), callback=self.ParseItemList)
