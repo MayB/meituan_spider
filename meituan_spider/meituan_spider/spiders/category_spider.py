@@ -12,6 +12,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 class CategorySpider(scrapy.Spider):
+  #名称
   name = "category_spider"
   def __init__(self):
     super(CategorySpider, self).__init__()
@@ -20,7 +21,7 @@ class CategorySpider(scrapy.Spider):
     for i in xrange(26):
       url_list.append("http://i.meituan.com/index/changecity/more/" + chr(i + ord('A')) + "?cevent=imt%2FselectCity%2Fmore")
     self.start_urls = tuple(url_list)
-
+  #解析
   def parse(self, response):
     city_list = response.selector.xpath('//ul[@class="table box nopadding"]/li/a/@data-citypinyin').extract()
     for city in city_list:
@@ -28,6 +29,7 @@ class CategorySpider(scrapy.Spider):
       for i in range(1, 1000):
         yield scrapy.http.Request(url=url + str(i), callback=self.ParseItemList)
 
+  #分析每一个item
   def ParseItemList(self, response):
     main_list = response.selector.xpath('//div[@class="deal-container"]/div[@id="deals"]/dl[@class="list"]')
     for item in main_list:
@@ -37,11 +39,11 @@ class CategorySpider(scrapy.Spider):
       for sub_item in sub_item_list:
         write2DB('localhost', 'root', 'root', 'meituan', '3306')
         print title + " " + sub_item
+  #写数据库
   def write2DB(self, sub_item, dbhost, dbuser, dbpasswd, dbname, dbport)
     try:
         conn=MySQLdb.connect(host=dbhost,user=dbuser,passwd=dbpasswd,db=dbname,port=dbport)
         cur=conn.cursor()
-        #cur.execute('select * from user')
         value = [1, 'hello world!']
         cur.execute('insert into test values(%s,%s)',value)
         cur.close()
