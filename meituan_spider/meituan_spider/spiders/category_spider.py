@@ -40,7 +40,7 @@ class CategorySpider(scrapy.Spider):
         write2DB('localhost', 'root', 'root', 'meituan', '3306')
         print title + " " + sub_item
   #写数据库
-  def write2DB(self, sub_item, dbhost, dbuser, dbpasswd, dbname, dbport)
+  def write2DB(self, sub_item, dbhost, dbuser, dbpasswd, dbname, dbport):
     try:
         conn=MySQLdb.connect(host=dbhost,user=dbuser,passwd=dbpasswd,db=dbname,port=dbport)
         cur=conn.cursor()
