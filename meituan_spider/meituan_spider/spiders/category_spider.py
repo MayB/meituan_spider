@@ -38,9 +38,9 @@ class CategorySpider(scrapy.Spider):
       sub_item_list = item.xpath('dd/dl[@class="list"]/dd/a/div[@class="dealcard dealcard-poi"]/div[@class="dealcard-block-right"]/div[@class="title text-block"]/text()').extract()
       for sub_item in sub_item_list:
         print title + " " + sub_item
-  def write2DB(self, sub_item)
+  def write2DB(self, sub_item, dbhost, dbuser, dbpasswd, dbname, dbport)
     try:
-        conn=MySQLdb.connect(host='localhost',user='root',passwd='root',db='test',port=3306)
+        conn=MySQLdb.connect(host=dbhost,user=dbuser,passwd=dbpasswd,db=dbname,port=dbport)
         cur=conn.cursor()
         #cur.execute('select * from user')
         value = [1, 'hello world!']
