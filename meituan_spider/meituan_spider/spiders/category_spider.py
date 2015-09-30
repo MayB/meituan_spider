@@ -42,7 +42,7 @@ class CategorySpider(scrapy.Spider):
   #写数据库
   def write2DB(self, sub_item, dbhost, dbuser, dbpasswd, dbname, dbport):
     try:
-        conn=MySQLdb.connect(host=dbhost,user=dbuser,passwd=dbpasswd,db=dbname,port=dbport)
+        conn=MySQLdb.connect(dbhost,dbuser,dbpasswd,dbname,dbport)
         cur=conn.cursor()
         value = [1, 'hello world!']
         cur.execute('insert into test values(%s,%s)',value)
