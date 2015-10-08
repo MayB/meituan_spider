@@ -37,6 +37,7 @@ class CategorySpider(scrapy.Spider):
       title = ''.join(title)
       sub_item_list = item.xpath('dd/dl[@class="list"]/dd/a/div[@class="dealcard dealcard-poi"]/div[@class="dealcard-block-right"]/div[@class="title text-block"]/text()').extract()
       for sub_item in sub_item_list:
+        #每次写数据库都会重新打开数据库连接不妥
         write2DB('localhost', 'root', 'root', 'meituan', '3306')
         print title + " " + sub_item
   #写数据库
