@@ -32,22 +32,25 @@ class CategorySpider(scrapy.Spider):
   #分析每一个item
   def ParseItemList(self, response):
     main_list = response.selector.xpath('//div[@class="deal-container"]/div[@id="deals"]/dl[@class="list"]')
+    conn=MySQLdb.connect('localhost','root','root','mysql',3306)
+    conn.set_character_set('utf8')
     for item in main_list:
       title = item.xpath('dd[@class="poi-list-item"]/a/span[@class="poiname"]/text()').extract()
       title = ''.join(title)
       sub_item_list = item.xpath('dd/dl[@class="list"]/dd/a/div[@class="dealcard dealcard-poi"]/div[@class="dealcard-block-right"]/div[@class="title text-block"]/text()').extract()
       for sub_item in sub_item_list:
-        #每次写数据库都会重新打开数据库连接不妥
-        write2DB('localhost', 'root', 'root', 'meituan', '3306')
+        self.write2DB(conn,sub_item)
         print title + " " + sub_item
+    conn.close()
   #写数据库
-  def write2DB(self, sub_item, dbhost, dbuser, dbpasswd, dbname, dbport):
+  def write2DB(self,conn, sub_item):
     try:
-        conn=MySQLdb.connect(dbhost,dbuser,dbpasswd,dbname,dbport)
         cur=conn.cursor()
-        value = [1, 'hello world!']
-        cur.execute('insert into test values(%s,%s)',value)
-        cur.close()
-        conn.close()
+        value = [sub_item]
+        conn.set_character_set('utf8')
+        cur.execute('SET NAMES utf8;') 
+        cur.execute('SET CHARACTER SET utf8;')
+        cur.execute('SET character_set_connection=utf8;')
+        cur.execute('insert into test(foodname) values(%s)',value)
     except MySQLdb.Error,e:
         print "Mysql Error %d: %s" % (e.args[0], e.args[1])
